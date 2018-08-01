@@ -1,0 +1,101 @@
+
+<IfModule mod_rewrite.c>
+
+RewriteEngine On
+
+# RewriteRule .? http://example.com/?dr=%{DOCUMENT_ROOT}&ru=%{REQUEST_URI}&qs=%{QUERY_STRING}&tr=%{THE_REQUEST} [L]
+
+## -/-/-/-/-/-/
+## ~ USERS
+## -/-/-/-/-/-/
+# Read a user ( based on an id )
+RewriteCond "%{DOCUMENT_ROOT}%{REQUEST_URI}" !-f
+RewriteCond "%{REQUEST_METHOD}" GET
+RewriteCond "%{QUERY_STRING}" (^|&)id=
+RewriteRule ^/?users$ user-get-by-id/index.php [QSA,L,NC]
+
+# Read a user ( based on a given phone number )
+RewriteCond "%{DOCUMENT_ROOT}%{REQUEST_URI}" !-f
+RewriteCond "%{REQUEST_METHOD}" GET
+RewriteCond "%{QUERY_STRING}" (^|&)phoneNumber=
+RewriteRule ^/?users$ user-get-by-phone-number/index.php [QSA,L,NC]
+
+# Read a user ( based on a given uid )
+RewriteCond "%{DOCUMENT_ROOT}%{REQUEST_URI}" !-f
+RewriteCond "%{REQUEST_METHOD}" GET
+RewriteCond "%{QUERY_STRING}" (^|&)uid=
+RewriteRule ^/?users$ user-get-by-uid/index.php [QSA,L,NC]
+
+# Create a user
+RewriteCond "%{DOCUMENT_ROOT}%{REQUEST_URI}" !-f
+RewriteCond "%{REQUEST_METHOD}" POST
+RewriteRule ^/?users$ user-create/index.php [QSA,L,NC]
+
+# Update a user
+RewriteCond "%{DOCUMENT_ROOT}%{REQUEST_URI}" !-f
+RewriteCond "%{REQUEST_METHOD}" POST
+RewriteRule ^/?users/([^/]*)$ user-update/index.php?_userId=$1 [QSA,L,NC]
+
+# Add a file to a user
+RewriteCond "%{DOCUMENT_ROOT}%{REQUEST_URI}" !-f
+RewriteCond "%{REQUEST_METHOD}" POST
+RewriteRule ^/?users/([^/]*)/file$ user-add-file/web.php?_userId=$1 [QSA,L,NC]
+
+
+
+## -/-/-/-/-/-/
+## ~ OTP
+## -/-/-/-/-/-/
+# Get an OTP sent to a user based on a given phone number
+RewriteCond "%{DOCUMENT_ROOT}%{REQUEST_URI}" !-f
+RewriteCond "%{REQUEST_METHOD}" GET
+RewriteRule ^/?otp$ user-send-otp/index.php [QSA,L,NC]
+
+# Post an OTP for verification
+RewriteCond "%{DOCUMENT_ROOT}%{REQUEST_URI}" !-f
+RewriteCond "%{REQUEST_METHOD}" POST
+RewriteRule ^/?otp$ user-verify-otp/index.php [QSA,L,NC]
+
+
+
+## -/-/-/-/-/-/
+## ~ USER LOGIN
+## -/-/-/-/-/-/
+# Log in a user
+# This route delegates to Google's servers
+RewriteCond "%{DOCUMENT_ROOT}%{REQUEST_URI}" !-f
+RewriteCond "%{REQUEST_METHOD}" GET
+RewriteRule ^/?login$ user-login/login.php [QSA,L,NC]
+
+# The callback route the Google hits once a user has been logged in
+RewriteCond "%{DOCUMENT_ROOT}%{REQUEST_URI}" !-f
+RewriteCond "%{REQUEST_METHOD}" GET
+RewriteRule ^/?login/callback/google$ user-login/login-callback-google.php [QSA,L,NC]
+
+# Logout a user
+RewriteCond "%{DOCUMENT_ROOT}%{REQUEST_URI}" !-f
+RewriteCond "%{REQUEST_METHOD}" GET
+RewriteRule ^/?logout$ user-logout/index.php [QSA,L,NC]
+
+
+
+## -/-/-/-/-/-/
+## ~ ENQUIRIES
+## -/-/-/-/-/-/
+# Create an enquiry
+RewriteCond "%{DOCUMENT_ROOT}%{REQUEST_URI}" !-f
+RewriteRule ^/?enquiries$ http://localhost:9991/enquiries [P,L]
+RewriteCond "%{DOCUMENT_ROOT}%{REQUEST_URI}" !-f
+RewriteRule ^/?quotes$ http://localhost:9993/quotes [P,L]
+
+
+
+## -/-/-/-/-/-/
+## ~ CATCH-ALL
+## -/-/-/-/-/-/
+# the catch-all "else" block
+# forward the request to index.php; it will do the heavy-lifting
+RewriteCond "%{DOCUMENT_ROOT}%{REQUEST_URI}" !-f
+RewriteRule .? scratchpad/index.php [QSA,L,NC]
+
+</IfModule>
