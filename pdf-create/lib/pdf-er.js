@@ -124,7 +124,7 @@ async function getURLAsPDF ( url, fileName, options ) {
 			left: "0",
 			right: "0",
 		},
-		// printBackground: true,
+		printBackground: true,
 		displayHeaderFooter: true,
 		headerTemplate: styles + headerTemplate,
 		footerTemplate: footerTemplate
@@ -159,7 +159,7 @@ async function renderPageAsPDF ( pageContent, fileName, options ) {
 			left: "0",
 			right: "0",
 		},
-		// printBackground: true,
+		printBackground: true,
 		displayHeaderFooter: true,
 		headerTemplate: styles + headerTemplate,
 		footerTemplate: footerTemplate
