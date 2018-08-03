@@ -1,8 +1,12 @@
 <?php
 
+$productionEnv = require __DIR__ . '/../env.php';
 $provider = require __DIR__ . '/lib/provider.php';
 
-$frontendAddress = 'http://pricing.om/quote';
+$frontendAddress = 'http://lw.lazaro.in/secret-soil/quote';
+if ( ! $productionEnv )
+	$frontendAddress = 'http://pricing.om/quote';
+
 $cookieName = 'ruser';
 
 $authCode = $_GET[ 'code' ] ?? 0;

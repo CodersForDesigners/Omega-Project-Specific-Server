@@ -1,5 +1,7 @@
 <?php
 
+$productionEnv = require __DIR__ . '/../../env.php';
+
 require __DIR__ . '/../../vendor/autoload.php';
 
 use League\OAuth2\Client\Provider\Google;
@@ -8,8 +10,10 @@ use League\OAuth2\Client\Provider\Google;
 // Create a project at https://console.developers.google.com/
 $clientId = '126828542038-93st8bcdheq25gp4ajj7afsjjr0cbc28.apps.googleusercontent.com';
 $clientSecret = 'dVkf9HNY6ZYYk2n6h4apYwp1';
-// Change this if you are not using the built-in PHP server
-$redirectUri = 'http://pricing.om/login/callback/google';
+
+$redirectUri = 'http://lw.lazaro.in/secret-soil/login/callback/google';
+if ( ! $productionEnv )
+	$redirectUri = 'http://pricing.om/login/callback/google';
 
 // Start the session
 session_start();
