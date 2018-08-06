@@ -11,9 +11,13 @@ use League\OAuth2\Client\Provider\Google;
 $clientId = '126828542038-93st8bcdheq25gp4ajj7afsjjr0cbc28.apps.googleusercontent.com';
 $clientSecret = 'dVkf9HNY6ZYYk2n6h4apYwp1';
 
-$redirectUri = 'http://lw.lazaro.in/secret-soil/login/callback/google';
-if ( ! $productionEnv )
-	$redirectUri = 'http://pricing.om/login/callback/google';
+$serverName = $_GET[ 'HTTP_HOST' ];
+$projectName = explode( '/', $_GET[ 'REQUEST_URI' ] )[ 1 ];
+$redirectUri = 'http://' . $serverName;
+if ( $productionEnv )
+	$redirectUri .= '/' . $projectName;
+
+$redirectUri .= '/login/callback/google';
 
 // Start the session
 session_start();

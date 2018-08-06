@@ -3,9 +3,12 @@
 $productionEnv = require __DIR__ . '/../env.php';
 $provider = require __DIR__ . '/lib/provider.php';
 
-$frontendAddress = 'http://lw.lazaro.in/secret-soil/quote';
-if ( ! $productionEnv )
-	$frontendAddress = 'http://pricing.om/quote';
+$projectName = explode( '/', $_GET[ 'REQUEST_URI' ] )[ 1 ];
+$frontendAddress = 'http://' . $_GET[ 'HTTP_HOST' ];
+if ( $productionEnv )
+	$frontendAddress .= '/' . $projectName;
+
+$frontendAddress .= '/quote';
 
 $cookieName = 'ruser';
 
