@@ -15,7 +15,7 @@ use CristianPontes\ZohoCRMClient\Exception as ZohoException;
  * Declare constants
  *
  */
-$authToken = 'd26aa791c15cd144fff5857ad96aeb39';
+$authToken = require __DIR__ . '/../../api.php';
 
 
 /*
