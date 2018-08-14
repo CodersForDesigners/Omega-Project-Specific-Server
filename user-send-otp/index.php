@@ -21,7 +21,7 @@ header( 'Content-Type: application/json' );
  * Get the data from the request
  */
 $phoneNumber = $_REQUEST[ 'phoneNumber' ];
-$project = $_REQUEST[ 'project' ] ?? 'Dasta';
+$template = $_REQUEST[ 'template' ] ?? 'Dasta';
 
 $apiKey = '693bc978-580e-11e8-a895-0200cd936042';
 
@@ -31,7 +31,7 @@ $apiKey = '693bc978-580e-11e8-a895-0200cd936042';
  * Make the request
  */
 // $requestEndpoint = 'https://2factor.in/API/V1/' . $apiKey . '/SMS/' . $phoneNumber . '/AUTOGEN';
-$requestEndpoint = 'https://2factor.in/API/V1/' . $apiKey . '/SMS/' . $phoneNumber . '/AUTOGEN/' . $project;
+$requestEndpoint = 'https://2factor.in/API/V1/' . $apiKey . '/SMS/' . $phoneNumber . '/AUTOGEN/' . $template;
 
 $request = curl_init( $requestEndpoint );
 
