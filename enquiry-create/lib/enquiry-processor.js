@@ -132,7 +132,11 @@ async function generatePricingSheet ( enquiry ) {
 		let tmpFile = os.tmpdir() + "/tmp-enquiry.json";
 		let pricingSheetFilePath = enquiry.pricingSheetFilePath;
 
-		await writeFile( tmpFile, JSON.stringify( enquiry.pdf ) );
+		await writeFile( tmpFile, JSON.stringify( {
+			meta: enquiry.meta,
+			user: enquiry.user,
+			points: enquiry.pdf
+		} ) );
 
 		let command = "node pdf-create/index.js -i '" + tmpFile + "' -o '" + pricingSheetFilePath + "'";
 		if ( process.env.NODE_ENV == "production" ) {

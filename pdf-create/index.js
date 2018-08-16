@@ -25,15 +25,13 @@ if ( process.env.NODE_ENV != "production" ) {
 
 async function main () {
 
-	let inputDataPoints = require( args.i );
+	let inputData = require( args.i );
 	let outputFilePath = args.o;
 	// getURLAsPDF( "http://pricing.om/pricing/1", "test1.pdf", { cookie } )
 	// let markup = render( data );
 	// renderPageAsPDF( "<p>haha</p>", "direct-markup.pdf" );
 	await getURLAsPDF( printURL, outputFilePath, {
-		data: {
-			points: inputDataPoints
-		}
+		data: inputData
 	} );
 	// console.log( data() )
 	process.stdout.write( JSON.stringify( { pricingSheet: args.o } ) );

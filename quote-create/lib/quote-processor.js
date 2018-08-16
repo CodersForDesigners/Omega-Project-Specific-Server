@@ -131,7 +131,11 @@ async function generateQuoteSheet ( quote ) {
 		let tmpFile = os.tmpdir() + "/tmp-quote.json";
 		let quoteSheetFilePath = quoteSheetDirectory + quote.pricingSheetFilename;
 
-		await writeFile( tmpFile, JSON.stringify( quote.pdf ) );
+		await writeFile( tmpFile, JSON.stringify( {
+			meta: quote.meta,
+			user: quote.user,
+			points: quote.pdf
+		} ) );
 
 		let command = "node pdf-create/index.js -i '" + tmpFile + "' -o '" + quoteSheetFilePath + "'";
 		if ( process.env.NODE_ENV == "production" ) {
