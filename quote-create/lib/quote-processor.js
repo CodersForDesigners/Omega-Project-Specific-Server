@@ -198,7 +198,7 @@ async function createQuoteOnCRM ( quote ) {
  * - pricingSheetURL
  */
 
-	let userId = quote.user._id;
+	let userId = quote.customer._id;
 	let quoteName = quote.crm[ "Quote name" ];
 	let validFor = quote.meta[ "Quote Valid For" ];
 	let amount = quote.unit.grandTotal;
