@@ -58,9 +58,20 @@ RewriteRule ^/?otp$ user-verify-otp/index.php [QSA,L,NC]
 
 
 
-## -/-/-/-/-/-/
-## ~ USER LOGIN
-## -/-/-/-/-/-/
+## -/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
+## ~ USER REGISTRATION AND LOGIN
+## -/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
+# Register a user
+# This route delegates to Google's servers
+RewriteCond "%{DOCUMENT_ROOT}%{REQUEST_URI}" !-f
+RewriteCond "%{REQUEST_METHOD}" GET
+RewriteRule ^/?register$ user-register/register.php [QSA,L,NC]
+
+# The callback route the Google hits once a user has been registered
+RewriteCond "%{DOCUMENT_ROOT}%{REQUEST_URI}" !-f
+RewriteCond "%{REQUEST_METHOD}" GET
+RewriteRule ^/?register/callback/google$ user-register/register-callback-google.php [QSA,L,NC]
+
 # Log in a user
 # This route delegates to Google's servers
 RewriteCond "%{DOCUMENT_ROOT}%{REQUEST_URI}" !-f
