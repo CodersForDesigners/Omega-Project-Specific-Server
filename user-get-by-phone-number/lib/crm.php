@@ -66,6 +66,10 @@ function getLeadByPhoneNumber ( $phoneNumber ) {
 		'Last Name' => $records[ 0 ]->data[ 'Last Name' ] ?? '',
 		'Email' => $records[ 0 ]->data[ 'Email' ] ?? ''
 	];
+	foreach ( $records[ 0 ]->data as $key => $value ) {
+		if ( strpos( $key, '_ ' ) === 0 )
+			$existingLead[ $key ] = $value;
+	}
 
 	return $existingLead;
 
@@ -105,6 +109,10 @@ function getProspectByPhoneNumber ( $phoneNumber ) {
 		'Last Name' => $records[ 0 ]->data[ 'Last Name' ],
 		'Email' => $records[ 0 ]->data[ 'Email' ]
 	];
+	foreach ( $records[ 0 ]->data as $key => $value ) {
+		if ( strpos( $key, '_ ' ) === 0 )
+			$existingProspect[ $key ] = $value;
+	}
 
 	return $existingProspect;
 

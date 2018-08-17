@@ -60,6 +60,10 @@ function getUserByUid ( $uid ) {
 		'Co-applicant Name' => $records[ 0 ]->data[ 'Co-applicant Name' ] ?? '',
 		'Email' => $records[ 0 ]->data[ 'Email' ] ?? ''
 	];
+	foreach ( $records[ 0 ]->data as $key => $value ) {
+		if ( strpos( $key, '_ ' ) === 0 )
+			$user[ $key ] = $value;
+	}
 
 	return $user;
 

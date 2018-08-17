@@ -48,6 +48,10 @@ try {
 		'email' => $user[ 'Email' ] ?? '',
 		'coApplicantName' => $user[ 'Co-applicant Name' ] ?? ''
 	];
+	foreach ( $user as $key => $value ) {
+		if ( strpos( $key, '_ ' ) === 0 )
+			$response[ 'data' ][ $key ] = $value;
+	}
 	die( json_encode( $response ) );
 
 } catch ( Exception $e ) {

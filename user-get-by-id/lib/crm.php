@@ -61,6 +61,10 @@ function getLeadById ( $id ) {
 		'Last Name' => $record->data[ 'Last Name' ] ?? '',
 		'Email' => $record->data[ 'Email' ] ?? ''
 	];
+	foreach ( $record->data as $key => $value ) {
+		if ( strpos( $key, '_ ' ) === 0 )
+			$existingLead[ $key ] = $value;
+	}
 
 	return $existingLead;
 
@@ -95,6 +99,10 @@ function getProspectById ( $id ) {
 		'Last Name' => $record->data[ 'Last Name' ],
 		'Email' => $record->data[ 'Email' ]
 	];
+	foreach ( $record->data as $key => $value ) {
+		if ( strpos( $key, '_ ' ) === 0 )
+			$existingProspect[ $key ] = $value;
+	}
 
 	return $existingProspect;
 

@@ -47,6 +47,10 @@ try {
 		'phoneNumber' => $user[ 'Phone' ] ?? '',
 		'email' => $user[ 'Email' ] ?? ''
 	];
+	foreach ( $user as $key => $value ) {
+		if ( strpos( $key, '_ ' ) === 0 )
+			$response[ 'data' ][ $key ] = $value;
+	}
 	die( json_encode( $response ) );
 
 } catch ( Exception $e ) {
