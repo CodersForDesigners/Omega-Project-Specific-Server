@@ -16,10 +16,8 @@ if ( ! ( args.i && args.o ) ) {
 	process.exit( 1 );
 }
 
-let printURL = "http://lw.lazaro.in/secret-soil/print-pricing-sheet";
-if ( process.env.NODE_ENV != "production" ) {
-	printURL = "http://pricing.om/print-pricing-sheet";
-}
+
+
 
 
 async function main () {
@@ -29,6 +27,10 @@ async function main () {
 	// getURLAsPDF( "http://pricing.om/pricing/1", "test1.pdf", { cookie } )
 	// let markup = render( data );
 	// renderPageAsPDF( "<p>haha</p>", "direct-markup.pdf" );
+	let printURL = inputData.meta[ "Print Sheet Route" ];
+	if ( process.env.NODE_ENV != "production" ) {
+		printURL = "http://pricing.om/print-pricing-sheet";
+	}
 	await getURLAsPDF( printURL, outputFilePath, {
 		data: inputData
 	} );
