@@ -53,8 +53,8 @@ $envelope = [
 	'username' => 'google@lazaro.in',
 	'password' => 't34m,l4z4r0',
 	'from' => [
-		'email' => 'adityabhat@lazaro.in',
-		'name' => 'The Omega'
+		'email' => 'google@lazaro.in',
+		'name' => $mail[ 'From Name' ] ?? 'The Builders'
 	],
 	'to' => [
 		'email' => $user[ 'email' ],
