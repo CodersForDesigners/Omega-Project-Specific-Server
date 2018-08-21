@@ -47,7 +47,7 @@ if ( $authCode ) {
 			'role' => 'executive',
 			'suspended' => false
 		];
-		file_put_contents( $userDatabase, json_encode( $users ) );
+		file_put_contents( $userDatabase, json_encode( $users, JSON_PRETTY_PRINT ) );
 
 		header( 'Location: ' . $frontendAddress );
 
