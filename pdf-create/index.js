@@ -28,6 +28,9 @@ async function main () {
 	// let markup = render( data );
 	// renderPageAsPDF( "<p>haha</p>", "direct-markup.pdf" );
 	let printURL = inputData.meta[ "Print Sheet Route" ];
+	if ( ! printURL )
+		throw new Error( "No print sheet template route provided." );
+
 	if ( process.env.NODE_ENV != "production" ) {
 		printURL = "http://pricing.om/print-pricing-sheet";
 	}
@@ -40,4 +43,7 @@ async function main () {
 };
 
 main()
-	// .catch( e => console.log( e ) )
+	.catch( e => {
+		process.stderr.write( e.message );
+		process.exit( 1 );
+	} )
