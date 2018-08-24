@@ -53,6 +53,7 @@ if ( empty( $input[ 'phoneNumber' ] ) ) {
 
 // Pull all the input data
 $project = $input[ 'project' ] ?? 'Dasta Concerto';
+$assignmentRuleId = $input[ 'assignmentRuleId' ] ?? false;
 $phoneNumber = $input[ 'phoneNumber' ];
 // $unit = $input[ 'unit' ];
 $firstName = $input[ 'firstName' ] ?? 'lazaro test';
@@ -70,7 +71,7 @@ $leadData = [
 try {
 
 	// Create the lead
-	$lead = CRM\createLead( $leadData );
+	$lead = CRM\createLead( $leadData, $assignmentRuleId );
 
 	// Construct a response and respond back
 	$response[ 'statusCode' ] = 0;

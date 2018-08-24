@@ -25,16 +25,18 @@ class OmegaException extends \Exception {}
 
 
 
-function createLead ( $data ) {
+function createLead ( $data, $assignmentRuleId ) {
 
 	global $authToken;
 	$zohoClient = new ZohoCRMClient( 'Leads', $authToken, 'com', 0 );
 
-	$apiResponse = $zohoClient->insertRecords()
-				->addRecord( $data )
-				->onDuplicateError()
-				->triggerWorkflow()
-				->request();
+	$apiRequest = $zohoClient->insertRecords()
+					->addRecord( $data )
+					->onDuplicateError()
+					->triggerWorkflow();
+	if ( $assignmentRuleId )
+		$apiRequest = $apiRequest->triggerAssignmentRule( $assignmentRuleId );
+	$apiResponse = $apiRequest->request();
 	$apiResponse = array_values( $apiResponse )[ 0 ];
 	if ( ! empty( $apiResponse->error ) ) {
 		if ( ! empty( $apiResponse->error->description ) ) {
