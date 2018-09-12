@@ -25,10 +25,11 @@ header( 'Content-Type: application/json' );
 require __DIR__ . '/lib/crm.php';
 
 $phoneNumber = $_GET[ 'phoneNumber' ];
+$project = $_GET[ 'project' ];
 
 try {
 
-	$user = CRM\getUserByPhoneNumber( $phoneNumber );
+	$user = CRM\getUserByPhoneNumber( $phoneNumber, $project );
 
 	// If no prospect or lead was found
 	if ( empty( $user ) ) {

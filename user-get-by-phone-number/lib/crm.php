@@ -23,16 +23,16 @@ $authToken = require __DIR__ . '/../../api.php';
  * Get user by phone number
  * -----
  */
-function getUserByPhoneNumber ( $phoneNumber ) {
+function getUserByPhoneNumber ( $phoneNumber, $project ) {
 
-	$user = getLeadByPhoneNumber( $phoneNumber );
+	$user = getLeadByPhoneNumber( $phoneNumber, $project );
 	if ( ! $user )
-		$user = getProspectByPhoneNumber( $phoneNumber );
+		$user = getProspectByPhoneNumber( $phoneNumber, $project );
 	return $user;
 
 }
 
-function getLeadByPhoneNumber ( $phoneNumber ) {
+function getLeadByPhoneNumber ( $phoneNumber, $project ) {
 
 	global $authToken;
 	$zohoClient = new ZohoCRMClient( 'Leads', $authToken, 'com', 0 );
@@ -40,7 +40,7 @@ function getLeadByPhoneNumber ( $phoneNumber ) {
 	try {
 		$records = $zohoClient->searchRecords()
 					->where( 'Phone', $phoneNumber )
-					// ->orWhere( 'Email', $email )
+					->where( 'Project', $project )
 					->request();
 		$records = array_values( $records );
 	} catch ( ZohoException\NoDataException $e ) {
@@ -75,7 +75,7 @@ function getLeadByPhoneNumber ( $phoneNumber ) {
 
 }
 
-function getProspectByPhoneNumber ( $phoneNumber ) {
+function getProspectByPhoneNumber ( $phoneNumber, $project ) {
 
 	global $authToken;
 	$zohoClient = new ZohoCRMClient( 'Contacts', $authToken, 'com', 0 );
@@ -83,7 +83,7 @@ function getProspectByPhoneNumber ( $phoneNumber ) {
 	try {
 		$records = $zohoClient->searchRecords()
 					->where( 'Phone', $phoneNumber )
-					// ->orWhere( 'Email', $email )
+					->where( 'Project', $project )
 					->request();
 		$records = array_values( $records );
 	} catch ( ZohoException\NoDataException $e ) {
