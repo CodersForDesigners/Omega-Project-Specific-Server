@@ -25,10 +25,11 @@ header( 'Content-Type: application/json' );
 require __DIR__ . '/lib/crm.php';
 
 $uid = $_GET[ 'uid' ];
+$project = $_GET[ 'project' ];
 
 try {
 
-	$user = CRM\getUserByUid( $uid );
+	$user = CRM\getUserByUid( $uid, $project );
 
 	// If no prospect or lead was found
 	if ( empty( $user ) ) {
@@ -52,6 +53,7 @@ try {
 		if ( strpos( $key, '_ ' ) === 0 )
 			$response[ 'data' ][ $key ] = $value;
 	}
+
 	die( json_encode( $response ) );
 
 } catch ( Exception $e ) {

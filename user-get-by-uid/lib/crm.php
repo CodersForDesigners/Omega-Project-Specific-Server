@@ -26,7 +26,7 @@ $authToken = require __DIR__ . '/../../api.php';
  * Users with UIDs are prospects.
  *
  */
-function getUserByUid ( $uid ) {
+function getUserByUid ( $uid, $project ) {
 
 	global $authToken;
 	$zohoClient = new ZohoCRMClient( 'Contacts', $authToken, 'com', 0 );
@@ -34,6 +34,7 @@ function getUserByUid ( $uid ) {
 	try {
 		$records = $zohoClient->searchRecords()
 					->where( 'UID', $uid )
+					->where( 'Project', $project )
 					->request();
 		$records = array_values( $records );
 	} catch ( ZohoException\NoDataException $e ) {
