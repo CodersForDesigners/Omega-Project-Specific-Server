@@ -31,7 +31,7 @@ if ( empty( $arguments[ 'i' ] ) ) {
 $inputFileName = $arguments[ 'i' ];
 try {
 	$input = json_decode( file_get_contents( $inputFileName ), true );
-} catch ( Exception $e ) {
+} catch ( \Exception $e ) {
 	$response[ 'message' ] = 'Error in processing input.';
 	$response[ 'message' ] .= '\n' . $e->getMessage();
 	fwrite( STDERR, $response[ 'message' ] );
@@ -40,8 +40,8 @@ try {
 
 $user = $input[ 'user' ];
 $mail = $input[ 'mail' ];
-$pricingSheetFilename = $input[ 'pricingSheetFilename' ];
-$pricingSheetURL = $input[ 'pricingSheetURL' ];
+$pricingSheetFilename = empty( $input[ 'pricingSheetFilename' ] ) ? null : $input[ 'pricingSheetFilename' ];
+$pricingSheetURL = empty( $input[ 'pricingSheetURL' ] ) ? null : $input[ 'pricingSheetURL' ];
 
 /*
  *
@@ -54,12 +54,13 @@ $envelope = [
 	'password' => 't34m,l4z4r0',
 	'from' => [
 		'email' => 'google@lazaro.in',
-		'name' => $mail[ 'From Name' ] ?? 'The Builders'
+		'name' => empty( $mail[ 'From Name' ] ) ? 'The Builders' : $mail[ 'From Name' ]
 	],
 	'to' => [
 		'email' => $user[ 'email' ],
 		// 'email' => 'adityabhat@lazaro.in',
-		'name' => $user[ 'name' ]
+		'name' => $user[ 'name' ],
+		'additionalEmails' => empty( $user[ 'otherEmails' ] ) ? [ ] : $user[ 'otherEmails' ]
 	],
 	'subject' => $mail[ 'Subject' ],
 	'body' => preg_replace( '/\R/', '<br>', $mail[ 'Body' ] )
@@ -75,7 +76,7 @@ if ( ! empty( $pricingSheetURL ) ) {
 try {
 	$response[ 'message' ] = Mailer\send( $envelope );
 	die( json_encode( $response ) );
-} catch ( Exception $e ) {
+} catch ( \Exception $e ) {
 	$response[ 'message' ] = 'The mail could not be sent. ' . $e->getMessage();
 	fwrite( STDERR, $response[ 'message' ] );
 	exit( 1 );

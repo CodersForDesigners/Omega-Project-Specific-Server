@@ -67,6 +67,11 @@ function send ( $envelope ) {
 
 		// Set who the message is to be sent to
 		$mail->addAddress( $envelope[ 'to' ][ 'email' ], '' );
+		if ( ! empty( $envelope[ 'to' ][ 'additionalEmails' ] ) ) {
+			foreach ( $email as $envelope[ 'to' ][ 'additionalEmails' ] ) {
+				$mail->addCC( $email, '' );
+			}
+		}
 		// $mail->addCC( 'adityabhat@lazaro.in', '' );
 
 		$mail->isHTML( true );
@@ -90,9 +95,9 @@ function send ( $envelope ) {
 
 		return 'Mail sent.';
 
-	} catch ( Exception $e ) {
+	} catch ( \Exception $e ) {
 
-		throw new Exception( $mail->ErrorInfo );
+		throw new \Exception( $mail->ErrorInfo );
 
 	}
 
