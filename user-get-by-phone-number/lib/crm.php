@@ -45,7 +45,7 @@ function getLeadByPhoneNumber ( $phoneNumber, $project ) {
 		$records = array_values( $records );
 	} catch ( ZohoException\NoDataException $e ) {
 		$records = [ ];
-	} catch ( Exception $e ) {
+	} catch ( \Exception $e ) {
 		$records = [ ];
 	}
 
@@ -54,17 +54,19 @@ function getLeadByPhoneNumber ( $phoneNumber, $project ) {
 	}
 
 	if ( count( $records ) > 1 ) {
-		throw new Exception( 'More than one lead found with the provided phone number and email.' );
+		throw new \Exception( 'More than one user found in this project with the number ' . $phoneNumber . '.', 2 );
 	}
 
 	$existingLead = [
 		'SMOWNERID' => $records[ 0 ]->data[ 'SMOWNERID' ],
 		'_id' => $records[ 0 ]->data[ 'LEADID' ],
+		'uid' => $records[ 0 ]->data[ 'UID' ],
 		'Phone' => $records[ 0 ]->data[ 'Phone' ] ?? '',
 		'Full Name' => $records[ 0 ]->data[ 'Full Name' ] ?? '',
 		'First Name' => $records[ 0 ]->data[ 'First Name' ] ?? '',
 		'Last Name' => $records[ 0 ]->data[ 'Last Name' ] ?? '',
-		'Email' => $records[ 0 ]->data[ 'Email' ] ?? ''
+		'Email' => $records[ 0 ]->data[ 'Email' ] ?? '',
+		'Co-applicant Name' => $records[ 0 ]->data[ 'Co-applicant Name' ] ?? ''
 	];
 	foreach ( $records[ 0 ]->data as $key => $value ) {
 		if ( strpos( $key, '_ ' ) === 0 )
@@ -88,7 +90,7 @@ function getProspectByPhoneNumber ( $phoneNumber, $project ) {
 		$records = array_values( $records );
 	} catch ( ZohoException\NoDataException $e ) {
 		$records = [ ];
-	} catch ( Exception $e ) {
+	} catch ( \Exception $e ) {
 		$records = [ ];
 	}
 
@@ -97,17 +99,19 @@ function getProspectByPhoneNumber ( $phoneNumber, $project ) {
 	}
 
 	if ( count( $records ) > 1 ) {
-		throw new Exception( 'More than one prospect found with the provided phone number and email.' );
+		throw new \Exception( 'More than one user found in this project with the number ' . $phoneNumber . '.', 2 );
 	}
 
 	$existingProspect = [
 		'SMOWNERID' => $records[ 0 ]->data[ 'SMOWNERID' ],
 		'_id' => $records[ 0 ]->data[ 'CONTACTID' ],
-		'Phone' => $records[ 0 ]->data[ 'Phone' ],
-		'Full Name' => $records[ 0 ]->data[ 'Full Name' ],
-		'First Name' => $records[ 0 ]->data[ 'First Name' ],
-		'Last Name' => $records[ 0 ]->data[ 'Last Name' ],
-		'Email' => $records[ 0 ]->data[ 'Email' ]
+		'uid' => $records[ 0 ]->data[ 'UID' ],
+		'Phone' => $records[ 0 ]->data[ 'Phone' ] ?? '',
+		'Full Name' => $records[ 0 ]->data[ 'Full Name' ] ?? '',
+		'First Name' => $records[ 0 ]->data[ 'First Name' ] ?? '',
+		'Last Name' => $records[ 0 ]->data[ 'Last Name' ] ?? '',
+		'Co-applicant Name' => $records[ 0 ]->data[ 'Co-applicant Name' ] ?? '',
+		'Email' => $records[ 0 ]->data[ 'Email' ] ?? ''
 	];
 	foreach ( $records[ 0 ]->data as $key => $value ) {
 		if ( strpos( $key, '_ ' ) === 0 )

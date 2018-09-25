@@ -44,7 +44,7 @@ function getLeadById ( $id ) {
 		$record = array_values( $record )[ 0 ];
 	} catch ( ZohoException\NoDataException $e ) {
 		$record = [ ];
-	} catch ( Exception $e ) {
+	} catch ( \Exception $e ) {
 		$record = [ ];
 	}
 
@@ -82,7 +82,7 @@ function getProspectById ( $id ) {
 		$record = array_values( $record )[ 0 ];
 	} catch ( ZohoException\NoDataException $e ) {
 		$record = [ ];
-	} catch ( Exception $e ) {
+	} catch ( \Exception $e ) {
 		$record = [ ];
 	}
 
