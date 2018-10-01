@@ -11,6 +11,7 @@ done
 
 # Establish symbolic links to the `data` directory
 rm data
+ln -s ../configuration/${PROJECT_DIR} configuration
 ln -s ../data/${PROJECT_DIR} data
 
 # Reload the node processes

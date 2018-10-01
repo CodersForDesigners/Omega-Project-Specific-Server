@@ -2,5 +2,8 @@
 # the .DS_Store files everywhere
 .DS_Store
 
+# the configuration directory
+/configuration
+
 # the data directory
 /data
