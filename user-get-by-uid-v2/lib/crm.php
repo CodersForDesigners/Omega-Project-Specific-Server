@@ -31,9 +31,10 @@ $authCredentials = json_decode( file_get_contents( $authCredentialsFilename ), t
 function getUserByUid ( $uid, $project ) {
 
 	$user = getRecordByUid( $uid, 'Leads', [ 'Project' => $project ] );
-	if ( ! $user ) {
+	if ( ! empty( $user ) ) {
 		$user = getRecordByUid( $uid, 'Contacts', [ 'Project' => $project ] );
-		$user[ 'isProspect' ] = true;
+		if ( ! empty( $user ) )
+			$user[ 'isProspect' ] = true;
 	}
 
 	return $user;
