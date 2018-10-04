@@ -28,11 +28,11 @@ $authCredentials = json_decode( file_get_contents( $authCredentialsFilename ), t
  * Get user by UID
  * -----
  */
-function getUserByUid ( $uid ) {
+function getUserByUid ( $uid, $project ) {
 
-	$user = getRecordByUid( $uid, 'Leads' );
+	$user = getRecordByUid( $uid, 'Leads', [ 'Project' => $project ] );
 	if ( ! $user ) {
-		$user = getRecordByUid( $uid, 'Contacts' );
+		$user = getRecordByUid( $uid, 'Contacts', [ 'Project' => $project ] );
 		$user[ 'isProspect' ] = true;
 	}
 
@@ -40,12 +40,20 @@ function getUserByUid ( $uid ) {
 
 }
 
-function getRecordByUid ( $uid, $recordType ) {
+function getRecordByUid ( $uid, $recordType, $moreCriteria = [ ] ) {
 
 	global $authCredentials;
 	$accessToken = $authCredentials[ 'access_token' ];
 
-	$endpoint = 'https://www.zohoapis.com/crm/v2/' . $recordType . '/search?criteria=((UID:equals:' . $uid . '))';
+	$baseURL = 'https://www.zohoapis.com/crm/v2/' . $recordType . '/search';
+	$criteria = '(UID:equals:' . $uid . ')';
+	foreach ( $moreCriteria as $name => $value ) {
+		if ( empty( $value ) )
+			continue;
+		$criteria .= 'and(' . $name . ':equals:' . $value . ')';
+	}
+	$criteria = '?criteria=(' . $criteria . ')';
+	$endpoint = $baseURL . $criteria;
 
 	$httpRequest = curl_init();
 	curl_setopt( $httpRequest, CURLOPT_URL, $endpoint );
