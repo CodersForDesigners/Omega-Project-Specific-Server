@@ -13,7 +13,7 @@ $clientSecret = '0uMrUjXIIVjHq9zd1MAGGv9X';
 
 $serverName = $_GET[ 'HTTP_HOST' ];
 $projectName = explode( '/', $_GET[ 'REQUEST_URI' ] )[ 1 ];
-$redirectUri = 'http://' . $serverName;
+$redirectUri = 'https://' . $serverName;
 if ( $productionEnv )
 	$redirectUri .= '/' . $projectName;
 

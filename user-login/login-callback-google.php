@@ -4,7 +4,7 @@ $productionEnv = require __DIR__ . '/../env.php';
 $provider = require __DIR__ . '/lib/provider.php';
 
 $projectName = explode( '/', $_GET[ 'REQUEST_URI' ] )[ 1 ];
-$frontendAddress = 'http://' . $_GET[ 'HTTP_HOST' ];
+$frontendAddress = 'https://' . $_GET[ 'HTTP_HOST' ];
 if ( $productionEnv )
 	$frontendAddress .= '/' . $projectName;
 
