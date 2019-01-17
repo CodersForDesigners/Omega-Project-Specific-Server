@@ -1,8 +1,8 @@
 
+# PATH=/bin:/usr/bin:/usr/local/bin:/var/www/<omega-server-installation>/setup
+# HOME=/var/www/data/<omega-server-installation>/logs/
 SHELL=/bin/sh
-PATH=/bin:/usr/bin:/usr/local/bin:/var/www/omega/setup
 MAILTO="adi@lazaro.in"
-HOME=/var/www/data/omega/logs/
 
 # Refresh the Zoho API tokens every 45 minutes
 */45		*		*		*		*	zoho-refresh-api-tokens.php > zoho-refresh-api-tokens.log 2>&1

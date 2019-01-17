@@ -9,16 +9,30 @@ while getopts "p:" opt; do
 	esac
 done
 
-# Establish symbolic links to the `data` directory
+# Establish symbolic links for the following directories:
+# the data folder
 rm data
-ln -s ../configuration/${PROJECT_DIR} configuration
 ln -s ../data/${PROJECT_DIR} data
+# the configuration folder
+rm configuration
+ln -s ../configuration/${PROJECT_DIR} configuration
+# the logs folder
+rm logs
+ln -s ../data/${PROJECT_DIR}/logs logs
 
 # Reload the node processes
 pm2 reload "enquiry processor"
 pm2 reload "quote processor"
 
-# Schedule a task to run every 45 minutes
+# Set up all the scheduled tasks with cron
 chmod 744 setup/zoho-refresh-api-tokens.php
 php setup/zoho-refresh-api-tokens.php
-crontab setup/tasks.crontab
+
+CURRENT_WORKING_DIR=`pwd`
+HOME=${CURRENT_WORKING_DIR}/logs
+CRON_ENV="\n\nPATH=/bin:/usr/bin:/usr/local/bin:${CURRENT_WORKING_DIR}/setup\nHOME=${HOME}\n";
+printf $CRON_ENV | cat - setup/tasks.crontab | tee tmp_crontab;
+rm setup/tasks.crontab;
+mv tmp_crontab setup/tasks.crontab;
+cp setup/tasks.crontab ../cronjobs/$PROJECT_DIR.crontab
+cat ../cronjobs/*.crontab | crontab -
