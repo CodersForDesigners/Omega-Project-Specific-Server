@@ -55,6 +55,7 @@ function getLeadById ( $id ) {
 	$existingLead = [
 		'SMOWNERID' => $record->data[ 'SMOWNERID' ],
 		'_id' => $record->data[ 'LEADID' ],
+		'UID' => $record->data[ 'UID' ],
 		'Phone' => $record->data[ 'Phone' ] ?? '',
 		'Full Name' => $record->data[ 'Full Name' ] ?? '',
 		'First Name' => $record->data[ 'First Name' ] ?? '',
@@ -93,6 +94,7 @@ function getProspectById ( $id ) {
 	$existingProspect = [
 		'SMOWNERID' => $record->data[ 'SMOWNERID' ],
 		'_id' => $record->data[ 'CONTACTID' ],
+		'UID' => $record->data[ 'UID' ],
 		'Phone' => $record->data[ 'Phone' ],
 		'Full Name' => $record->data[ 'Full Name' ],
 		'First Name' => $record->data[ 'First Name' ],

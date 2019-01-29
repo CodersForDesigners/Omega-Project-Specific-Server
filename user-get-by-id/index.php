@@ -41,6 +41,7 @@ try {
 	$response[ 'statusCode' ] = 0;
 	$response[ 'data' ] = [
 		'_id' => $user[ '_id' ] ?? '',
+		'uid' => $user[ 'UID' ] ?? '',
 		'name' => $user[ 'Full Name' ] ?? '',
 		'firstName' => $user[ 'First Name' ] ?? '',
 		'lastName' => $user[ 'Last Name' ] ?? '',
