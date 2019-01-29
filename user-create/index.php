@@ -72,16 +72,22 @@ try {
 
 	// Create the lead
 	$lead = CRM\createLead( $leadData, $assignmentRuleId );
+	$leadId = $lead->id;
 
 	// Construct a response and respond back
 	$response[ 'statusCode' ] = 0;
+
+	// Fetch the lead we just created ( because we need the UID )
+	$user = CRM\getUserById( $leadId );
 	$response[ 'data' ] = [
-		'_id' => $lead->id ?? ''
+		'_id' => $user[ '_id' ] ?? $leadId,	// This now has to be kept for ThinkMobi
+		'uid' => $user[ 'UID' ]
 	];
+
 	$response[ 'message' ] = 'User created.';
 	die( json_encode( $response ) );
 
-} catch ( Exception $e ) {
+} catch ( \Exception $e ) {
 
 	// If the error is generic
 	if ( get_class( $e ) != "OmegaException" ) {
