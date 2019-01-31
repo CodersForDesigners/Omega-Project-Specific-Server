@@ -42,6 +42,11 @@ RewriteCond "%{DOCUMENT_ROOT}%{REQUEST_URI}" !-f
 RewriteCond "%{REQUEST_METHOD}" POST
 RewriteRule ^/?users/([^/]*)$ user-update/index.php?_userId=$1 [QSA,L,NC]
 
+# Add a note to a user
+RewriteCond "%{DOCUMENT_ROOT}%{REQUEST_URI}" !-f
+RewriteCond "%{REQUEST_METHOD}" POST
+RewriteRule ^/?users/([^/]*)/notes$ user-add-note/index.php?uid=$1 [QSA,L,NC]
+
 # Add a file to a user
 RewriteCond "%{DOCUMENT_ROOT}%{REQUEST_URI}" !-f
 RewriteCond "%{REQUEST_METHOD}" POST
