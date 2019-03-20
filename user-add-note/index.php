@@ -44,6 +44,7 @@ try {
 	}
 
 	CRM\addNoteToUser( $note, $user[ 'id' ], $user[ 'isProspect' ] );
+	CRM\updateWebsiteActivityTimestamp( $user[ 'id' ], $user[ 'isProspect' ] );
 
 	$response[ 'statusCode' ] = 0;
 	$response[ 'message' ] = 'Noted.';

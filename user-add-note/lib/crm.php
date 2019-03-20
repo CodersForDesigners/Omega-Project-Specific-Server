@@ -155,3 +155,47 @@ function addNoteToUser ( $note, $id, $isProspect ) {
 	return $body;
 
 }
+
+
+
+/*
+ * Update the "Last Website Visit" timestamp
+ */
+function updateWebsiteActivityTimestamp ( $id, $isProspect ) {
+
+	global $zohoApiUrl;
+
+	if ( $isProspect )
+		$recordType = 'Contacts';
+	else
+		$recordType = 'Leads';
+
+	$endpoint = "${zohoApiUrl}${recordType}";
+
+	$currentTimestamp = date( 'Y-m-d' ) . 'T' . date( 'H:i:s' ) . '+05:30';
+	$data = [
+		'data' => [
+			[
+				'id' => $id,
+				'Last_Website_Visit' => $currentTimestamp
+			]
+		]
+	];
+
+	$response = getAPIResponse( $endpoint, 'PUT', $data );
+
+	$body = json_decode( $response, true );
+
+	if ( empty( $body ) )
+		return [ ];
+
+	// If an error occurred
+	if ( ! empty( $body[ 'code' ] ) )
+		if ( $body[ 'code' ] == 'INVALID_TOKEN' )
+			throw new \Exception( 'Access token is invalid.', 10 );
+
+	$body = array_filter( $body[ 'data' ][ 0 ] );
+
+	return $body;
+
+}
