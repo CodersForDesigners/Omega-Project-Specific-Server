@@ -26,10 +26,17 @@ require __DIR__ . '/lib/crm.php';
 
 $phoneNumber = $_GET[ 'phoneNumber' ];
 $project = $_GET[ 'project' ];
+if ( empty( $project ) ) {
+	$response[ 'statusCode' ] = -2;
+	$response[ 'message' ] = 'No project was provided.';
+	http_response_code( 404 );
+	die( json_encode( $response ) );
+}
+$client = explode( ' ', $project )[ 0 ];
 
 try {
 
-	$user = CRM\getUserByPhoneNumber( $phoneNumber, $project );
+	$user = CRM\getUserByPhoneNumber( $phoneNumber, $client );
 
 	// If no prospect or lead was found
 	if ( empty( $user ) ) {
@@ -41,18 +48,18 @@ try {
 
 	$response[ 'statusCode' ] = 0;
 	$response[ 'data' ] = [
-		'_id' => $user[ '_id' ] ?? '',
-		'uid' => $user[ 'uid' ] ?? '',
-		'name' => $user[ 'Full Name' ] ?? '',
-		'firstName' => $user[ 'First Name' ] ?? '',
-		'lastName' => $user[ 'Last Name' ] ?? '',
+		'_id' => $user[ 'id' ] ?? '',
+		'uid' => $user[ 'UID' ] ?? '',
+		'isProspect' => $user[ 'isProspect' ] ?? false,
+		'project' => $project,
+		'name' => $user[ 'Full_Name' ] ?? '',
+		'firstName' => $user[ 'First_Name' ] ?? '',
+		'lastName' => $user[ 'Last_Name' ] ?? '',
 		'phoneNumber' => $user[ 'Phone' ] ?? '',
-		'email' => $user[ 'Email' ] ?? ''
+		'email' => $user[ 'Email' ] ?? '',
+		'_ Special Discount' => $user[ 'Special_Discount' ],
+		'_ Discount Valid Till' => $user[ 'Discount_Valid_Till' ]
 	];
-	foreach ( $user as $key => $value ) {
-		if ( strpos( $key, '_ ' ) === 0 )
-			$response[ 'data' ][ $key ] = $value;
-	}
 
 	die( json_encode( $response ) );
 

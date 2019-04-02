@@ -5,119 +5,132 @@ namespace CRM;
 ini_set( "display_errors", 0 );
 ini_set( "error_reporting", E_ALL );
 
-require_once __DIR__ . '/../../vendor/autoload.php';
+// Set the timezone
+date_default_timezone_set( 'Asia/Kolkata' );
+// Do not let this script timeout
+set_time_limit( 0 );
 
-use CristianPontes\ZohoCRMClient\ZohoCRMClient;
-use CristianPontes\ZohoCRMClient\Exception as ZohoException;
+
 
 /*
  *
- * Declare constants
+ * Get the auth credentials
  *
  */
-$authToken = require __DIR__ . '/../../api.php';
+$authCredentialsFilename = __DIR__ . '/../../configuration/zoho.json';
+if ( empty( realpath( $authCredentialsFilename ) ) )
+	sleep( 1 );
+$authCredentials = json_decode( file_get_contents( $authCredentialsFilename ), true );
 
+/*
+ *
+ * Define some constant values
+ *
+ */
+$operatorRelationMap = [
+	'=' => 'equals',
+	'^=' => 'starts_with'
+];
 
 /*
  * -----
  * Get user by phone number
  * -----
  */
-function getUserByPhoneNumber ( $phoneNumber, $project ) {
+function getUserByPhoneNumber ( $phoneNumber, $client ) {
 
-	$user = getLeadByPhoneNumber( $phoneNumber, $project );
-	if ( ! $user )
-		$user = getProspectByPhoneNumber( $phoneNumber, $project );
+	$user = getRecordWhere( 'Leads', [
+		'Phone' => $phoneNumber,
+		'Project' => [ '^=', $client ]
+	] );
+	if ( empty( $user ) ) {
+		$user = getRecordWhere( 'Contacts', [
+			'Phone' => $phoneNumber,
+			'Project' => [ '^=', $client ]
+		] );
+		if ( ! empty( $user ) )
+			$user[ 'isProspect' ] = true;
+	}
+
 	return $user;
 
 }
 
-function getLeadByPhoneNumber ( $phoneNumber, $project ) {
+function getRecordWhere ( $recordType, $criteria = [ ] ) {
 
-	global $authToken;
-	$zohoClient = new ZohoCRMClient( 'Leads', $authToken, 'com', 0 );
+	global $authCredentials;
+	global $operatorRelationMap;
+	$accessToken = $authCredentials[ 'access_token' ];
 
-	try {
-		$records = $zohoClient->searchRecords()
-					->where( 'Phone', $phoneNumber )
-					->where( 'Project', $project )
-					->request();
-		$records = array_values( $records );
-	} catch ( ZohoException\NoDataException $e ) {
-		$records = [ ];
-	} catch ( \Exception $e ) {
-		$records = [ ];
+	$baseURL = 'https://www.zohoapis.com/crm/v2/' . $recordType . '/search';
+	$criteriaString = '';
+
+	foreach ( $criteria as $name => $relation__value ) {
+
+		if ( empty( $relation__value ) )
+			continue;
+
+		if ( is_array( $relation__value ) ) {
+			$operator = $relation__value[ 0 ];
+			$value = $relation__value[ 1 ];
+			$criteriaString .= 'and(' . $name . ':' . $operatorRelationMap[ $operator ] . ':' . urlencode( $value ) . ')';
+		}
+		else {
+			$value = $relation__value;
+			$criteriaString .= 'and(' . $name . ':equals:' . urlencode( $value ) . ')';
+		}
+
+	}
+	$criteriaString = '?criteria=(' . substr( $criteriaString, 3 ) . ')';
+	$endpoint = $baseURL . $criteriaString;
+
+	$httpRequest = curl_init();
+	curl_setopt( $httpRequest, CURLOPT_URL, $endpoint );
+	curl_setopt( $httpRequest, CURLOPT_RETURNTRANSFER, true );
+	curl_setopt( $httpRequest, CURLOPT_USERAGENT, 'Zo Ho Ho' );
+	curl_setopt( $httpRequest, CURLOPT_HTTPHEADER, [
+		'Authorization: Zoho-oauthtoken ' . $accessToken,
+		'Cache-Control: no-cache, no-store, must-revalidate'
+	] );
+	curl_setopt( $httpRequest, CURLOPT_CUSTOMREQUEST, 'GET' );
+	$response = curl_exec( $httpRequest );
+	curl_close( $httpRequest );
+
+	$body = json_decode( $response, true );
+
+	if ( empty( $body ) )
+		return [ ];
+
+	// If an error occurred
+	if ( ! empty( $body[ 'code' ] ) )
+		if ( $body[ 'code' ] == 'INVALID_TOKEN' )
+			throw new \Exception( 'Access token is invalid.', 10 );
+
+	// If more than one records were found
+	if ( $body[ 'info' ][ 'count' ] > 1 ) {
+		$errorMessage = 'More than one ' . $recordType . ' found with the given criteria; ';
+		foreach ( $criteria as $name => $relation__value ) {
+
+			if ( empty( $relation__value ) )
+				continue;
+
+			if ( is_array( $relation__value ) ) {
+				$operator = $relation__value[ 0 ];
+				$value = $relation__value[ 1 ];
+				$errorMessage .= $name . ' ' . $operatorRelationMap[ $operator ] . ' ' . $value;
+			}
+			else {
+				$value = $relation__value;
+				$errorMessage .= $name . ' equals ' . $value;
+			}
+
+		}
+		$errorMessage .= '.';
+		throw new \Exception( $errorMessage, 2 );
 	}
 
-	if ( empty( $records ) ) {
-		return null;
-	}
+	$body = array_filter( $body[ 'data' ][ 0 ] );
 
-	if ( count( $records ) > 1 ) {
-		throw new \Exception( 'More than one user found in this project with the number ' . $phoneNumber . '.', 2 );
-	}
-
-	$existingLead = [
-		'SMOWNERID' => $records[ 0 ]->data[ 'SMOWNERID' ],
-		'_id' => $records[ 0 ]->data[ 'LEADID' ],
-		'uid' => $records[ 0 ]->data[ 'UID' ],
-		'Phone' => $records[ 0 ]->data[ 'Phone' ] ?? '',
-		'Full Name' => $records[ 0 ]->data[ 'Full Name' ] ?? '',
-		'First Name' => $records[ 0 ]->data[ 'First Name' ] ?? '',
-		'Last Name' => $records[ 0 ]->data[ 'Last Name' ] ?? '',
-		'Email' => $records[ 0 ]->data[ 'Email' ] ?? '',
-		'Co-applicant Name' => $records[ 0 ]->data[ 'Co-applicant Name' ] ?? ''
-	];
-	foreach ( $records[ 0 ]->data as $key => $value ) {
-		if ( strpos( $key, '_ ' ) === 0 )
-			$existingLead[ $key ] = $value;
-	}
-
-	return $existingLead;
-
-}
-
-function getProspectByPhoneNumber ( $phoneNumber, $project ) {
-
-	global $authToken;
-	$zohoClient = new ZohoCRMClient( 'Contacts', $authToken, 'com', 0 );
-
-	try {
-		$records = $zohoClient->searchRecords()
-					->where( 'Phone', $phoneNumber )
-					->where( 'Project', $project )
-					->request();
-		$records = array_values( $records );
-	} catch ( ZohoException\NoDataException $e ) {
-		$records = [ ];
-	} catch ( \Exception $e ) {
-		$records = [ ];
-	}
-
-	if ( empty( $records ) ) {
-		return null;
-	}
-
-	if ( count( $records ) > 1 ) {
-		throw new \Exception( 'More than one user found in this project with the number ' . $phoneNumber . '.', 2 );
-	}
-
-	$existingProspect = [
-		'SMOWNERID' => $records[ 0 ]->data[ 'SMOWNERID' ],
-		'_id' => $records[ 0 ]->data[ 'CONTACTID' ],
-		'uid' => $records[ 0 ]->data[ 'UID' ],
-		'Phone' => $records[ 0 ]->data[ 'Phone' ] ?? '',
-		'Full Name' => $records[ 0 ]->data[ 'Full Name' ] ?? '',
-		'First Name' => $records[ 0 ]->data[ 'First Name' ] ?? '',
-		'Last Name' => $records[ 0 ]->data[ 'Last Name' ] ?? '',
-		'Co-applicant Name' => $records[ 0 ]->data[ 'Co-applicant Name' ] ?? '',
-		'Email' => $records[ 0 ]->data[ 'Email' ] ?? ''
-	];
-	foreach ( $records[ 0 ]->data as $key => $value ) {
-		if ( strpos( $key, '_ ' ) === 0 )
-			$existingProspect[ $key ] = $value;
-	}
-
-	return $existingProspect;
+	return $body;
 
 }
