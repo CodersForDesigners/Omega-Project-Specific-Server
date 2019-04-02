@@ -49,12 +49,10 @@ try {
 		'lastName' => $user[ 'Last_Name' ] ?? '',
 		'phoneNumber' => $user[ 'Phone' ] ?? '',
 		'email' => $user[ 'Email' ] ?? '',
-		'coApplicantName' => $user[ 'Co-applicant Name' ] ?? ''
+		'coApplicantName' => $user[ 'Co-applicant Name' ] ?? '',
+		'_ Special Discount' => $user[ 'Special_Discount' ],
+		'_ Discount Valid Till' => $user[ 'Discount_Valid_Till' ]
 	];
-	foreach ( $user as $key => $value ) {
-		if ( strpos( $key, '_ ' ) === 0 )
-			$response[ 'data' ][ $key ] = $value;
-	}
 
 	die( json_encode( $response ) );
 
