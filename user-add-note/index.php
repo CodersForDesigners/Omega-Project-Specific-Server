@@ -25,7 +25,14 @@ header( 'Content-Type: application/json' );
 require __DIR__ . '/lib/crm.php';
 
 $uid = $_GET[ 'uid' ];
-$project = $_GET[ 'project' ] ?? '';
+$project = $_GET[ 'project' ];
+if ( empty( $project ) ) {
+	$response[ 'statusCode' ] = -2;
+	$response[ 'message' ] = 'No project was provided.';
+	http_response_code( 404 );
+	die( json_encode( $response ) );
+}
+$client = explode( ' ', $project )[ 0 ];
 $note = [
 	'title' => $_POST[ 'title' ] ?? '',
 	'content' => $_POST[ 'content' ] ?? ''
@@ -33,7 +40,7 @@ $note = [
 
 try {
 
-	$user = CRM\getUserByUid( $uid, $project );
+	$user = CRM\getUserByUid( $uid, $client );
 
 	// If no prospect or lead was found
 	if ( empty( $user ) ) {

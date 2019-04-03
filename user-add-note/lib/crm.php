@@ -24,35 +24,24 @@ $authCredentials = json_decode( file_get_contents( $authCredentialsFilename ), t
 
 /*
  *
- * Set global constants
+ * Set constant values
  *
  */
 $zohoApiUrl = 'https://www.zohoapis.com/crm/v2/';
+// $zohoApiUrl = 'https://sandbox.zohoapis.com/crm/v2/';
+$operatorRelationMap = [
+	'=' => 'equals',
+	'^=' => 'starts_with'
+];
+
 
 
 
 /*
  * -----
- * Get user by UID
+ * A generic API request function
  * -----
  */
-function getUserByUid ( $uid, $project ) {
-
-	$user = getRecordByUid( $uid, 'Leads', [ 'Project' => $project ] );
-
-	if ( ! empty( $user ) )
-		$user[ 'isProspect' ] = false;
-
-	if ( empty( $user ) ) {
-		$user = getRecordByUid( $uid, 'Contacts', [ 'Project' => $project ] );
-		if ( ! empty( $user ) )
-			$user[ 'isProspect' ] = true;
-	}
-
-	return $user;
-
-}
-
 function getAPIResponse ( $endpoint, $method, $data = [ ] ) {
 
 	global $authCredentials;
@@ -67,9 +56,7 @@ function getAPIResponse ( $endpoint, $method, $data = [ ] ) {
 		'Cache-Control: no-cache, no-store, must-revalidate'
 	];
 	if ( ! empty( $data ) ) {
-		// $headers[ ] = 'Content-Type: application/x-www-form-urlencoded';
 		$headers[ ] = 'Content-Type: application/json';
-		// curl_setopt( $httpRequest, CURLOPT_POSTFIELDS, http_build_query( $data ) );
 		curl_setopt( $httpRequest, CURLOPT_POSTFIELDS, json_encode( $data ) );
 	}
 	curl_setopt( $httpRequest, CURLOPT_HTTPHEADER, $headers );
@@ -81,19 +68,57 @@ function getAPIResponse ( $endpoint, $method, $data = [ ] ) {
 
 }
 
-function getRecordByUid ( $uid, $recordType, $moreCriteria = [ ] ) {
+/*
+ * -----
+ * Get user by UID
+ * -----
+ */
+function getUserByUid ( $uid, $client ) {
+
+	$user = getRecordByUid( 'Leads', [
+		'UID' => $uid,
+		'Project' => [ '^=', $client ]
+	] );
+	if ( empty( $user ) ) {
+		$user = getRecordByUid( 'Contacts', [
+			'UID' => $uid,
+			'Project' => [ '^=', $client ]
+		] );
+		if ( ! empty( $user ) )
+			$user[ 'isProspect' ] = true;
+	}
+
+	return $user;
+
+}
+
+function getRecordByUid ( $recordType, $criteria = [ ] ) {
 
 	global $zohoApiUrl;
+	global $authCredentials;
+	global $operatorRelationMap;
 
 	$baseURL = $zohoApiUrl . $recordType . '/search';
-	$criteria = '(UID:equals:' . urlencode( $uid ) . ')';
-	foreach ( $moreCriteria as $name => $value ) {
-		if ( empty( $value ) )
+
+	$criteriaString = '';
+	foreach ( $criteria as $name => $relation__value ) {
+
+		if ( empty( $relation__value ) )
 			continue;
-		$criteria .= 'and(' . $name . ':equals:' . urlencode( $value ) . ')';
+
+		if ( is_array( $relation__value ) ) {
+			$operator = $relation__value[ 0 ];
+			$value = $relation__value[ 1 ];
+			$criteriaString .= 'and(' . $name . ':' . $operatorRelationMap[ $operator ] . ':' . urlencode( $value ) . ')';
+		}
+		else {
+			$value = $relation__value;
+			$criteriaString .= 'and(' . $name . ':equals:' . urlencode( $value ) . ')';
+		}
+
 	}
-	$criteria = '?criteria=(' . $criteria . ')';
-	$endpoint = $baseURL . $criteria;
+	$criteriaString = '?criteria=(' . substr( $criteriaString, 3 ) . ')';
+	$endpoint = $baseURL . $criteriaString;
 
 	$response = getAPIResponse( $endpoint, 'GET' );
 
@@ -108,8 +133,27 @@ function getRecordByUid ( $uid, $recordType, $moreCriteria = [ ] ) {
 			throw new \Exception( 'Access token is invalid.', 10 );
 
 	// If more than one records were found
-	if ( $body[ 'info' ][ 'count' ] > 1 )
-		throw new \Exception( 'More than one ' . $recordType . ' found with the UID ' . $uid . '.', 2 );
+	if ( $body[ 'info' ][ 'count' ] > 1 ) {
+		$errorMessage = 'More than one ' . $recordType . ' found with the given criteria; ';
+		foreach ( $criteria as $name => $relation__value ) {
+
+			if ( empty( $relation__value ) )
+				continue;
+
+			if ( is_array( $relation__value ) ) {
+				$operator = $relation__value[ 0 ];
+				$value = $relation__value[ 1 ];
+				$errorMessage .= $name . ' ' . $operatorRelationMap[ $operator ] . ' ' . $value;
+			}
+			else {
+				$value = $relation__value;
+				$errorMessage .= $name . ' equals ' . $value;
+			}
+
+		}
+		$errorMessage .= '.';
+		throw new \Exception( $errorMessage, 2 );
+	}
 
 	$body = array_filter( $body[ 'data' ][ 0 ] );
 
