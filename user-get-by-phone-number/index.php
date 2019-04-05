@@ -55,7 +55,7 @@ try {
 		'name' => $user[ 'Full_Name' ] ?? '',
 		'firstName' => $user[ 'First_Name' ] ?? '',
 		'lastName' => $user[ 'Last_Name' ] ?? '',
-		'phoneNumber' => $user[ 'Phone' ] ?? '',
+		'phoneNumber' => $phoneNumber,
 		'email' => $user[ 'Email' ] ?? '',
 		'_ Special Discount' => $user[ 'Special_Discount' ],
 		'_ Discount Valid Till' => $user[ 'Discount_Valid_Till' ]
