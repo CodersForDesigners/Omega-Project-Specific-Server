@@ -57,8 +57,8 @@ try {
 		'lastName' => $user[ 'Last_Name' ] ?? '',
 		'phoneNumber' => $phoneNumber,
 		'email' => $user[ 'Email' ] ?? '',
-		'_ Special Discount' => $user[ 'Special_Discount' ],
-		'_ Discount Valid Till' => $user[ 'Discount_Valid_Till' ]
+		'_ Special Discount' => $user[ 'Special_Discount' ] ?? null,
+		'_ Discount Valid Till' => $user[ 'Discount_Valid_Till' ] ?? null
 	];
 
 	die( json_encode( $response ) );
