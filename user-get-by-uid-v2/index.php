@@ -43,6 +43,7 @@ try {
 	$response[ 'data' ] = [
 		'_id' => $user[ 'id' ] ?? '',
 		'uid' => $user[ 'UID' ] ?? '',
+		'isDuplicate' => $user[ 'Is_Duplicate' ] ?? false,
 		'isProspect' => $user[ 'isProspect' ] ?? false,
 		'project' => empty( $project ) ? $user[ 'Project' ][ 0 ] : $project,
 		'name' => $user[ 'Full_Name' ] ?? '',
