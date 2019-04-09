@@ -44,7 +44,7 @@ try {
 		'_id' => $user[ 'id' ] ?? '',
 		'uid' => $user[ 'UID' ] ?? '',
 		'isProspect' => $user[ 'isProspect' ] ?? false,
-		'project' => $user[ 'Project' ],
+		'project' => empty( $project ) ? $user[ 'Project' ][ 0 ] : $project,
 		'name' => $user[ 'Full_Name' ] ?? '',
 		'firstName' => $user[ 'First_Name' ] ?? '',
 		'lastName' => $user[ 'Last_Name' ] ?? '',
