@@ -113,6 +113,16 @@ RewriteRule ^/?quotes$ http://localhost:9993/quotes [P,L]
 
 
 ## -/-/-/-/-/-/
+## ~ UTILITIES
+## -/-/-/-/-/-/
+# Send a mail
+RewriteCond "%{DOCUMENT_ROOT}%{REQUEST_URI}" !-f
+RewriteCond "%{REQUEST_METHOD}" POST
+RewriteRule ^/?mail$ mail-send/web.php [QSA,L,NC]
+
+
+
+## -/-/-/-/-/-/
 ## ~ CATCH-ALL
 ## -/-/-/-/-/-/
 # the catch-all "else" block
