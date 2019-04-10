@@ -91,6 +91,7 @@ function getUserByPhoneNumber ( $phoneNumber, $client ) {
 
 	$user = getRecordWhere( 'Leads', [
 		'and' => [
+			'Is_Duplicate' => 'false',
 			'Project' => [ '^=', $client ],
 			'or' => [
 				'Phone' => $phoneNumber,
@@ -101,6 +102,7 @@ function getUserByPhoneNumber ( $phoneNumber, $client ) {
 	if ( empty( $user ) ) {
 		$user = getRecordWhere( 'Contacts', [
 			'and' => [
+				'Is_Duplicate' => 'false',
 				'Project' => [ '^=', $client ],
 				'or' => [
 					'Phone' => $phoneNumber,
