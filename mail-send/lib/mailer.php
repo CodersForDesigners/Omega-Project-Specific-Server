@@ -72,7 +72,6 @@ function send ( $envelope ) {
 				$mail->addCC( $email, '' );
 			}
 		}
-		// $mail->addCC( 'adityabhat@lazaro.in', '' );
 
 		$mail->isHTML( true );
 
