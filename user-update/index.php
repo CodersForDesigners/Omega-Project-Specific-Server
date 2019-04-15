@@ -67,7 +67,7 @@ if ( empty( $user ) ) {
 
 $data = $_POST[ 'fields' ];
 // The "Last Name" field is mandatory, hence if it is empty, do not let it through
-if ( empty( $data[ 'Last Name' ] ) )
+if ( isset( $data[ 'Last Name' ] ) and empty( trim( $data[ 'Last Name' ] ) ) )
 	unset( $data[ 'Last Name' ] );
 
 try {
