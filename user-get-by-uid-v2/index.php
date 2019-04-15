@@ -41,6 +41,7 @@ try {
 
 	$response[ 'statusCode' ] = 0;
 	$response[ 'data' ] = [
+		'recordType' => $user[ 'recordType' ],
 		'_id' => $user[ 'id' ] ?? '',
 		'uid' => $user[ 'UID' ] ?? '',
 		'isDuplicate' => $user[ 'Is_Duplicate' ] ?? false,

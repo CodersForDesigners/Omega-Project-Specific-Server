@@ -48,6 +48,7 @@ try {
 
 	$response[ 'statusCode' ] = 0;
 	$response[ 'data' ] = [
+		'recordType' => $user[ 'recordType' ],
 		'_id' => $user[ 'id' ] ?? '',
 		'uid' => $user[ 'UID' ] ?? '',
 		'isProspect' => $user[ 'isProspect' ] ?? false,

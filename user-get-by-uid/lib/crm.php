@@ -28,7 +28,6 @@ function getUserByUid ( $uid ) {
 	$user = getLeadByUid( $uid );
 	if ( ! $user ) {
 		$user = getProspectByUid( $uid );
-		$user[ 'isProspect' ] = true;
 	}
 	return $user;
 
@@ -117,6 +116,8 @@ function getProspectByUid ( $uid ) {
 		if ( strpos( $key, '_ ' ) === 0 )
 			$existingProspect[ $key ] = $value;
 	}
+	if ( $records[ 0 ]->data[ 'Stage' ] == 'Prospect' )
+		$existingProspect[ 'isProspect' ] = true;
 
 	return $existingProspect;
 

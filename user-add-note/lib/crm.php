@@ -84,7 +84,9 @@ function getUserByUid ( $uid, $client ) {
 			'UID' => $uid,
 			'Project' => [ '^=', $client ]
 		] );
-		if ( ! empty( $user ) )
+	}
+	if ( ! empty( $user ) ) {
+		if ( $user[ 'Stage' ] == 'Prospect' )
 			$user[ 'isProspect' ] = true;
 	}
 
@@ -156,19 +158,15 @@ function getRecordByUid ( $recordType, $criteria = [ ] ) {
 	}
 
 	$body = array_filter( $body[ 'data' ][ 0 ] );
+	$body[ 'recordType' ] = $recordType;
 
 	return $body;
 
 }
 
-function addNoteToUser ( $note, $id, $isProspect ) {
+function addNoteToUser ( $note, $id, $recordType ) {
 
 	global $zohoApiUrl;
-
-	if ( $isProspect )
-		$recordType = 'Contacts';
-	else
-		$recordType = 'Leads';
 
 	$endpoint = "${zohoApiUrl}${recordType}/${id}/Notes";
 
@@ -205,14 +203,9 @@ function addNoteToUser ( $note, $id, $isProspect ) {
 /*
  * Update the "Last Website Visit" timestamp
  */
-function updateWebsiteActivityTimestamp ( $id, $isProspect ) {
+function updateWebsiteActivityTimestamp ( $id, $recordType ) {
 
 	global $zohoApiUrl;
-
-	if ( $isProspect )
-		$recordType = 'Contacts';
-	else
-		$recordType = 'Leads';
 
 	$endpoint = "${zohoApiUrl}${recordType}";
 

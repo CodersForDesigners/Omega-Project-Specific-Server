@@ -50,8 +50,8 @@ try {
 		die( json_encode( $response ) );
 	}
 
-	CRM\addNoteToUser( $note, $user[ 'id' ], $user[ 'isProspect' ] );
-	CRM\updateWebsiteActivityTimestamp( $user[ 'id' ], $user[ 'isProspect' ] );
+	CRM\addNoteToUser( $note, $user[ 'id' ], $user[ 'recordType' ] );
+	CRM\updateWebsiteActivityTimestamp( $user[ 'id' ], $user[ 'recordType' ] );
 
 	$response[ 'statusCode' ] = 0;
 	$response[ 'message' ] = 'Noted.';

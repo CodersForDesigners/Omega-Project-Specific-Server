@@ -53,6 +53,7 @@ function getLeadById ( $id ) {
 	}
 
 	$existingLead = [
+		'recordType' => 'Leads',
 		'SMOWNERID' => $record->data[ 'SMOWNERID' ],
 		'_id' => $record->data[ 'LEADID' ],
 		'UID' => $record->data[ 'UID' ],
@@ -66,6 +67,7 @@ function getLeadById ( $id ) {
 		if ( strpos( $key, '_ ' ) === 0 )
 			$existingLead[ $key ] = $value;
 	}
+	$existingLead[ 'isProspect' ] = false;
 
 	return $existingLead;
 
@@ -92,6 +94,7 @@ function getProspectById ( $id ) {
 	}
 
 	$existingProspect = [
+		'recordType' => 'Contacts',
 		'SMOWNERID' => $record->data[ 'SMOWNERID' ],
 		'_id' => $record->data[ 'CONTACTID' ],
 		'UID' => $record->data[ 'UID' ],
@@ -105,6 +108,8 @@ function getProspectById ( $id ) {
 		if ( strpos( $key, '_ ' ) === 0 )
 			$existingProspect[ $key ] = $value;
 	}
+	if ( $record->data[ 'Stage' ] == 'Prospect' )
+		$existingProspect[ 'isProspect' ] = true;
 
 	return $existingProspect;
 

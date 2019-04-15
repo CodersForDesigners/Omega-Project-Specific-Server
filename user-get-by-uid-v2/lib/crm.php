@@ -34,7 +34,8 @@ function getUserByUid ( $uid, $project ) {
 	if ( empty( $user ) ) {
 		$user = getRecordByUid( $uid, 'Contacts', [ 'Project' => $project ] );
 		if ( ! empty( $user ) )
-			$user[ 'isProspect' ] = true;
+			if ( $user[ 'Stage' ] == 'Prospect' )
+				$user[ 'isProspect' ] = true;
 	}
 
 	return $user;
@@ -83,6 +84,7 @@ function getRecordByUid ( $uid, $recordType, $moreCriteria = [ ] ) {
 		throw new \Exception( 'More than one ' . $recordType . ' found with the UID ' . $uid . '.', 2 );
 
 	$body = array_filter( $body[ 'data' ][ 0 ] );
+	$body[ 'recordType' ] = $recordType;
 
 	return $body;
 

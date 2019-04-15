@@ -40,8 +40,10 @@ try {
 
 	$response[ 'statusCode' ] = 0;
 	$response[ 'data' ] = [
+		'recordType' => $user[ 'recordType' ],
 		'_id' => $user[ '_id' ] ?? '',
 		'uid' => $user[ 'UID' ] ?? '',
+		'isProspect' => $user[ 'isProspect' ] ?? false,
 		'name' => $user[ 'Full Name' ] ?? '',
 		'firstName' => $user[ 'First Name' ] ?? '',
 		'lastName' => $user[ 'Last Name' ] ?? '',
