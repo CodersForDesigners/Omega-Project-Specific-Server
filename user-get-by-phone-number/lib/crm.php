@@ -125,7 +125,6 @@ function getUserByPhoneNumber ( $phoneNumber, $client ) {
 function getRecordWhere ( $recordType, $criteria = [ ] ) {
 
 	global $authCredentials;
-	global $operatorRelationMap;
 	$accessToken = $authCredentials[ 'access_token' ];
 
 	$baseURL = 'https://www.zohoapis.com/crm/v2/' . $recordType . '/search';
@@ -155,10 +154,10 @@ function getRecordWhere ( $recordType, $criteria = [ ] ) {
 			throw new \Exception( 'Access token is invalid.', 10 );
 
 	// If more than one records were found
-	if ( $body[ 'info' ][ 'count' ] > 1 ) {
-		$errorMessage = 'More than one ' . $recordType . ' found with the given criteria; ' . json_encode( $criteria ) . '.';
-		throw new \Exception( $errorMessage, 2 );
-	}
+	// if ( $body[ 'info' ][ 'count' ] > 1 ) {
+	// 	$errorMessage = 'More than one ' . $recordType . ' found with the given criteria; ' . json_encode( $criteria ) . '.';
+	// 	throw new \Exception( $errorMessage, 2 );
+	// }
 
 	$body = array_filter( $body[ 'data' ][ 0 ] );
 	$body[ 'recordType' ] = $recordType;
