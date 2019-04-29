@@ -2,7 +2,7 @@
 
 namespace CRM;
 
-ini_set( "display_errors", 1 );
+ini_set( "display_errors", 0 );
 ini_set( "error_reporting", E_ALL );
 
 require_once __DIR__ . '/../../vendor/autoload.php';
@@ -59,7 +59,7 @@ function getLeadById ( $id ) {
 		'type' => 'lead',
 		'SMOWNERID' => $record->data[ 'SMOWNERID' ],
 		'id' => $record->data[ 'LEADID' ],
-		'Phone' => $record->data[ 'Phone' ] ?? '',
+		'Phone' => $record->data[ 'Phone' ],
 		'Full Name' => $record->data[ 'Full Name' ] ?? '',
 		'First Name' => $record->data[ 'First Name' ] ?? '',
 		'Last Name' => $record->data[ 'Last Name' ] ?? '',
@@ -97,10 +97,10 @@ function getProspectById ( $id ) {
 		'SMOWNERID' => $record->data[ 'SMOWNERID' ],
 		'id' => $record->data[ 'CONTACTID' ],
 		'Phone' => $record->data[ 'Phone' ],
-		'Full Name' => $record->data[ 'Full Name' ],
-		'First Name' => $record->data[ 'First Name' ],
-		'Last Name' => $record->data[ 'Last Name' ],
-		'Email' => $record->data[ 'Email' ]
+		'Full Name' => $record->data[ 'Full Name' ] ?? '',
+		'First Name' => $record->data[ 'First Name' ] ?? '',
+		'Last Name' => $record->data[ 'Last Name' ] ?? '',
+		'Email' => $record->data[ 'Email' ] ?? ''
 	];
 
 	return $existingProspect;
