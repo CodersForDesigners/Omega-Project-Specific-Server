@@ -48,7 +48,7 @@ function getLeadById ( $id ) {
 		}
 	} catch ( ZohoException\NoDataException $e ) {
 		$record = [ ];
-	} catch ( Exception $e ) {
+	} catch ( \Exception $e ) {
 		$record = [ ];
 	}
 
@@ -62,9 +62,9 @@ function getLeadById ( $id ) {
 		'_id' => $record->data[ 'LEADID' ],
 		'Phone' => $record->data[ 'Phone' ],
 		'Full Name' => $record->data[ 'Full Name' ],
-		'First Name' => $record->data[ 'First Name' ],
+		'First Name' => $record->data[ 'First Name' ] ?? '',
 		'Last Name' => $record->data[ 'Last Name' ],
-		'Email' => $record->data[ 'Email' ] ?? null
+		'Email' => $record->data[ 'Email' ] ?? ''
 	];
 
 	return $existingLead;
@@ -85,7 +85,7 @@ function getProspectById ( $id ) {
 		}
 	} catch ( ZohoException\NoDataException $e ) {
 		$record = [ ];
-	} catch ( Exception $e ) {
+	} catch ( \Exception $e ) {
 		$record = [ ];
 	}
 
@@ -99,9 +99,9 @@ function getProspectById ( $id ) {
 		'_id' => $record->data[ 'CONTACTID' ],
 		'Phone' => $record->data[ 'Phone' ],
 		'Full Name' => $record->data[ 'Full Name' ],
-		'First Name' => $record->data[ 'First Name' ],
+		'First Name' => $record->data[ 'First Name' ] ?? '',
 		'Last Name' => $record->data[ 'Last Name' ],
-		'Email' => $record->data[ 'Email' ]
+		'Email' => $record->data[ 'Email' ] ?? ''
 	];
 
 	return $existingProspect;
@@ -137,7 +137,7 @@ function createQuote ( $user, $quote ) {
 				->triggerWorkflow()
 				->request();
 		$apiResponse = array_values( $apiResponse );
-	} catch ( Exception $e ) {
+	} catch ( \Exception $e ) {
 		throw new \Exception( 'Could not create the quote.' );
 	}
 
@@ -153,7 +153,7 @@ function createQuote ( $user, $quote ) {
 			// ->attachLink( $pricingSheetURL )
 			->uploadFromPath( $quote[ 'pricingSheet' ] )
 			->request();
-	} catch ( Exception $e ) {
+	} catch ( \Exception $e ) {
 		throw new \Exception( 'Could not attach the pricing sheet to the quote.' );
 	}
 
