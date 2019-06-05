@@ -17,6 +17,7 @@ let fs = require( "fs" );
 // Our custom imports
 let jsonFs = require( "./json-fs.js" );
 let quotes = require( "../db/quotes.js" );
+let mailer = require( "./mailer.js" );
 
 /*
  * Constants declarations
@@ -44,7 +45,7 @@ async function processQuote ( cb ) {
 		cb();
 		return;
 	}
-	quote.errors = "";
+	quote.errors = { };
 	quote.pricingSheetFilename = quote.crm[ "Pricing sheet name" ].trim().replace( /[/:]/g, "-" ) + ".pdf";
 	if ( process.env.NODE_ENV == "production" )
 		quote.pricingSheetURL = encodeURI( quote._hostname + "/omega/data/quote-sheets/" + quote.pricingSheetFilename );
@@ -63,7 +64,8 @@ async function processQuote ( cb ) {
 			await generateQuoteSheet( quote );
 			quote.pipeline.generateQuoteSheet = true;
 		} catch ( e ) {
-			quote.errors += e.message;
+			quote.errors.arePresent = true;
+			quote.errors.generateQuoteSheet = e.message;
 		}
 	}
 
@@ -78,12 +80,16 @@ async function processQuote ( cb ) {
 	// }
 
 	// Ingest the pricing sheet into the CRM
-	if ( ! quote.pipeline.createQuoteOnCRM ) {
+	if (
+		! quote.errors.arePresent
+		&& ! quote.pipeline.createQuoteOnCRM
+	) {
 		try {
 			await createQuoteOnCRM( quote );
 			quote.pipeline.createQuoteOnCRM = true;
 		} catch ( e ) {
-			quote.errors += e.message;
+			quote.errors.arePresent = true;
+			quote.errors.createQuoteOnCRM = e.message;
 		}
 	}
 
@@ -98,11 +104,12 @@ async function processQuote ( cb ) {
 	await writeFile( liveQuotesLogFileName, JSON.stringify( quotes.db ) );
 
 	// Notify us if there were any errors
-	if ( quote.errors ) {
+	if ( quote.errors.arePresent ) {
 		// Log them separately
 		await jsonFs.add( errorQuotesLogFileName, quote );
 		cb();
 		// Send mail to us
+		mailer.log( quote.errors, "Quote Processing on " + quote.meta.Project );
 		// axios.get( "http://ser.om/notify-error", { params: quote } );
 		return;
 	}
