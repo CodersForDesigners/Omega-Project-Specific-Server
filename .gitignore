@@ -2,6 +2,9 @@
 # the .DS_Store files everywhere
 .DS_Store
 
+# the node packages
+/node_modules
+
 # the configuration directory
 /configuration
 

@@ -20,6 +20,9 @@ ln -s ../configuration/${PROJECT_DIR} configuration
 rm logs
 ln -s ../data/${PROJECT_DIR}/logs logs
 
+# Install the node packages
+npm install
+
 # Reload the node processes
 pm2 reload "enquiry processor"
 pm2 reload "quote processor"
