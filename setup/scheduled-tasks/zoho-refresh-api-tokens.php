@@ -57,7 +57,7 @@ function sendMail ( $envelope ) {
 		'mail' => [ 'Subject' => $subject, 'Body' => $body ]
 	];
 	file_put_contents( $mailDataFilename, json_encode( $mailData ) );
-	exec( 'php \'' . __DIR__ . '/../mail-send/index.php\' -i \'' . $mailDataFilename . '\'' );
+	exec( 'php \'' . __DIR__ . '/../../mail-send/index.php\' -i \'' . $mailDataFilename . '\'' );
 	unlink( $mailDataFilename );
 
 }
@@ -75,7 +75,7 @@ function sendErrorMail ( $body ) {
 function main () {
 
 	// Get the current auth credentials
-	$authCredentialsFilename = __DIR__ . '/../configuration/zoho.json';
+	$authCredentialsFilename = __DIR__ . '/../../__environment/configuration/zoho.json';
 	try {
 		$authCredentials = json_decode( file_get_contents( $authCredentialsFilename ), true );
 	} catch ( Exception $e ) {
@@ -113,7 +113,7 @@ function main () {
 									- ( 5 * 60 );
 
 	// Write the credentials to a new file
-	$new__AuthCredentialsFilename = __DIR__ . '/../configuration/zoho-' . date( 'Ymd.His' ) . '.json';
+	$new__AuthCredentialsFilename = __DIR__ . '/../../__environment/configuration/zoho-' . date( 'Ymd.His' ) . '.json';
 	$authFileUpdated = file_put_contents( $new__AuthCredentialsFilename, json_encode( $authCredentials, JSON_PRETTY_PRINT ) );
 	if ( ! $authFileUpdated )
 		return sendErrorMail( 'Tokens were refreshed but the new auth file could not be created.' );
