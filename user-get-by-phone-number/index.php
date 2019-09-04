@@ -51,6 +51,7 @@ try {
 		'recordType' => $user[ 'recordType' ],
 		'_id' => $user[ 'id' ] ?? '',
 		'uid' => $user[ 'UID' ] ?? '',
+		'manager' => $user[ 'Owner' ][ 'name' ] ?? '',
 		'isProspect' => $user[ 'isProspect' ] ?? false,
 		'project' => $project,
 		'name' => $user[ 'Full_Name' ] ?? '',
