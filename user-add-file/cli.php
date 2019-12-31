@@ -42,7 +42,7 @@ $file = $arguments[ 'f' ];
 
 
 
-require_once __DIR__ . '/lib/crm.php';
+require_once __DIR__ . '/../lib/crm.php';
 
 
 /*
@@ -50,7 +50,7 @@ require_once __DIR__ . '/lib/crm.php';
  * Check if a user exists with the given id
  *
  */
-$user = CRM\getUserById( $userId );
+$user = CRM::getCustomerById( $userId );
 if ( empty( $user ) ) {
 	$response[ 'message' ] = "No user with the given ID was found.";
 	fwrite( STDERR, $response[ 'message' ] );
@@ -59,11 +59,11 @@ if ( empty( $user ) ) {
 
 try {
 
-	CRM\attachFileToUser( $userId, $user[ 'type' ], $file );
+	CRM::uploadAttachment( $user[ 'recordType' ], $userId, $file );
 	$response[ 'message' ] = 'Successfully attached file to the user.';
 	die( json_encode( $response ) );
 
-} catch ( Exception $e ) {
+} catch ( \Exception $e ) {
 
 	$response[ 'message' ] = $e->getMessage();
 	fwrite( STDERR, $response[ 'message' ] );

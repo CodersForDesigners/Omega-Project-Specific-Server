@@ -3,7 +3,7 @@
 /*
  *
  * The command structure:
- * 	php user-add-file/cli.php -u 2929500000002782047 -n '104 UID89' -v '14 days' -a 24123985 -p 'http://omega.api/quote-sheet.pdf'
+ * 	php create-quote.php -u 2929500000002782047 -n '104 UID89' -v '14 days' -a 24123985 -p 'http://omega.api/quote-sheet.pdf'
  *
  */
 
@@ -43,7 +43,7 @@ $userId = $arguments[ 'u' ];
 $quote = [
 	'name' => $arguments[ 'n' ],
 	'amount' => $arguments[ 'a' ],
-	'validFor' => $arguments[ 'v' ],
+	'validFor' => (int) $arguments[ 'v' ],
 	'pricingSheet' => $arguments[ 'p' ],
 ];
 $file = $arguments[ 'p' ];
@@ -52,7 +52,7 @@ $file = $arguments[ 'p' ];
 
 
 
-require_once __DIR__ . '/crm.php';
+require_once __DIR__ . '/../../lib/crm.php';
 
 
 /*
@@ -60,7 +60,7 @@ require_once __DIR__ . '/crm.php';
  * Check if a user exists with the given id
  *
  */
-$user = CRM\getUserById( $userId );
+$user = CRM::getCustomerById( $userId );
 if ( empty( $user ) ) {
 	$response[ 'message' ] = "No user with the given ID was found.";
 	fwrite( STDERR, $response[ 'message' ] );
@@ -68,7 +68,10 @@ if ( empty( $user ) ) {
 }
 
 try {
-	$response[ 'quoteId' ] = CRM\createQuote( $user, $quote );
+	$quoteRecord = CRM::createQuote( $user, $quote );
+	$quoteId = $quoteRecord[ 'id' ];
+	$response[ 'quoteId' ] = $quoteId;
+	CRM::uploadAttachment( 'Deals', $quoteId, $quote[ 'pricingSheet' ] );
 	die( json_encode( $response ) );
 } catch ( \Exception $e ) {
 	$response[ 'message' ] = 'The quote could not be made. ' . $e->getMessage();

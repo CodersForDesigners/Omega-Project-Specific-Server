@@ -31,7 +31,7 @@ header( 'Content-Type: application/json' );
 
 
 
-require_once __DIR__ . '/lib/crm.php';
+require_once __DIR__ . '/../lib/crm.php';
 
 
 
@@ -49,7 +49,6 @@ require_once __DIR__ . '/lib/crm.php';
  * 	4.1. If it does, then update the lead with new information.
  * 	4.2. Then add the pricing sheet as an attachment. END.
  * 	5. If it does not, then create a new lead with the given details.
- * 	6. Append the pricing sheet as an attachment. END.
  *
  */
 /*
@@ -59,20 +58,33 @@ require_once __DIR__ . '/lib/crm.php';
  */
 $userId = $_GET[ '_userId' ];
 
-$user = CRM\getUserById( $userId );
+$user = CRM::getCustomerById( $userId );
 if ( empty( $user ) ) {
 	$response[ 'statusCode' ] = 1;
 	$response[ 'message' ] = "No user with the given ID was found.";
+	http_response_code( 404 );
+	die( json_encode( $response ) );
 }
 
-$data = $_POST[ 'fields' ];
-// The "Last Name" field is mandatory, hence if it is empty, do not let it through
-if ( isset( $data[ 'Last Name' ] ) and empty( trim( $data[ 'Last Name' ] ) ) )
-	unset( $data[ 'Last Name' ] );
+/* ------------------------------------- \
+ * Interpret and Prepare the input
+ \-------------------------------------- */
+// Extract the changeset, replacing all spaces in the field names with an underscore
+// 	( for compatibility with the frontend )
+$formattedFieldNames = array_map( function ( $name ) {
+	return preg_replace( '/\s+/', '_', $name );
+}, array_keys( $_POST[ 'fields' ] ) );
+$data = array_combine( $formattedFieldNames, array_values( $_POST[ 'fields' ] ) );
+// The "Last Name" field is mandatory (on Zoho's end)
+// 	hence if it is empty, do not let it through
+if ( empty( trim( $data[ 'Last_Name' ] ) ) )
+	unset( $data[ 'Last_Name' ] );
+
+
 
 try {
 
-	CRM\updateUser( $userId, $user[ 'type' ], $data );
+	CRM::updateRecord( $user[ 'recordType' ], $user[ 'id' ], $data );
 	$response[ 'statusCode' ] = 0;
 	$response[ 'message' ] = 'Successfully updated the user.';
 	die( json_encode( $response ) );

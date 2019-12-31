@@ -39,7 +39,7 @@ $input = &$_REQUEST;
  * /-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-
  *
  */
-require __DIR__ . '/lib/crm.php';
+require __DIR__ . '/../lib/crm.php';
 
 
 
@@ -50,41 +50,39 @@ if ( empty( $input[ 'phoneNumber' ] ) ) {
 	http_response_code( 500 );
 	die( json_encode( $response ) );
 }
+if ( empty( $input[ 'project' ] ) ) {
+	$response[ 'statusCode' ] = 1;
+	$response[ 'message' ] = 'No project was provided.';
+	http_response_code( 500 );
+	die( json_encode( $response ) );
+}
 
 // Pull all the input data
-$project = $input[ 'project' ] ?? 'Dasta Concerto';
-$assignmentRuleId = $input[ 'assignmentRuleId' ] ?? false;
+$project = $input[ 'project' ];
 $phoneNumber = $input[ 'phoneNumber' ];
 // $unit = $input[ 'unit' ];
 $firstName = $input[ 'firstName' ] ?? 'lazaro test';
 $lastName = $input[ 'lastName' ] ?? 'hia there';
 $leadSource = $input[ 'context' ] ?? 'Website';
-$leadData = [
-	'Project' => $project,
-	'Lead Status' => 'Fresh',
-	'Lead Source' => $leadSource,
-	'First Name' => $firstName,
-	'Last Name' => $lastName,
-	'Phone' => $phoneNumber
+$data = [
+	'project' => $project,
+	'context' => $leadSource,
+	'firstName' => $firstName,
+	'lastName' => $lastName,
+	'phoneNumber' => $phoneNumber
 ];
 
 try {
 
 	// Create the lead
-	$lead = CRM\createLead( $leadData, $assignmentRuleId );
-	$leadId = $lead->id;
+	$personIds = CRM::createCustomer( $data );
 
 	// Construct a response and respond back
-	$response[ 'statusCode' ] = 0;
-
-	// Fetch the lead we just created ( because we need the UID )
-	$user = CRM\getUserById( $leadId );
-	$response[ 'data' ] = [
-		'_id' => $user[ '_id' ] ?? $leadId,	// This now has to be kept for ThinkMobi
-		'uid' => $user[ 'UID' ]
+	$response = [
+		'statusCode' => 0,
+		'message' => 'User created',
+		'data' => $personIds
 	];
-
-	$response[ 'message' ] = 'User created.';
 	die( json_encode( $response ) );
 
 } catch ( \Exception $e ) {

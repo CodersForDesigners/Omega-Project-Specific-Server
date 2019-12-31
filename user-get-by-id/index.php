@@ -22,13 +22,13 @@ set_time_limit( 0 );
 
 header( 'Content-Type: application/json' );
 
-require __DIR__ . '/lib/crm.php';
+require __DIR__ . '/../lib/crm.php';
 
 $id = $_GET[ 'id' ];
 
 try {
 
-	$user = CRM\getUserById( $id );
+	$user = CRM::getCustomerById( $id );
 
 	// If no prospect or lead was found
 	if ( empty( $user ) ) {
@@ -41,19 +41,23 @@ try {
 	$response[ 'statusCode' ] = 0;
 	$response[ 'data' ] = [
 		'recordType' => $user[ 'recordType' ],
-		'_id' => $user[ '_id' ] ?? '',
-		'uid' => $user[ 'UID' ] ?? '',
+		'_id' => $user[ 'id' ] ?? '',
+		'uid' => trim( $user[ 'UID' ] ) ?? trim( $user[ 'Hidden_UID' ] ) ?? '',
 		'isProspect' => $user[ 'isProspect' ] ?? false,
-		'name' => $user[ 'Full Name' ] ?? '',
-		'firstName' => $user[ 'First Name' ] ?? '',
-		'lastName' => $user[ 'Last Name' ] ?? '',
+		'project' => empty( $project ) ? $user[ 'Project' ][ 0 ] : '',
+		'name' => $user[ 'Full_Name' ] ?? '',
+		'firstName' => $user[ 'First_Name' ] ?? '',
+		'lastName' => $user[ 'Last_Name' ] ?? '',
 		'phoneNumber' => $user[ 'Phone' ] ?? '',
-		'email' => $user[ 'Email' ] ?? ''
+		'email' => $user[ 'Email' ] ?? '',
+		'isDuplicate' => $user[ 'Is_Duplicate' ] ?? false,
+		'_ Special Discount' => $user[ 'Special_Discount' ] ?? '',
+		'_ Discount Valid Till' => $user[ 'Discount_Valid_Till' ] ?? ''
 	];
-	foreach ( $user as $key => $value ) {
-		if ( strpos( $key, '_ ' ) === 0 )
-			$response[ 'data' ][ $key ] = $value;
-	}
+	// foreach ( $user as $key => $value ) {
+	// 	if ( strpos( $key, '_ ' ) === 0 )
+	// 		$response[ 'data' ][ $key ] = $value;
+	// }
 	die( json_encode( $response ) );
 
 } catch ( Exception $e ) {

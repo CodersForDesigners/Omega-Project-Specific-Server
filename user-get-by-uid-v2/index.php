@@ -52,7 +52,7 @@ try {
 		'lastName' => $user[ 'Last_Name' ] ?? '',
 		'phoneNumber' => $user[ 'Phone' ] ?? '',
 		'email' => $user[ 'Email' ] ?? '',
-		'coApplicantName' => $user[ 'Co-applicant Name' ] ?? '',
+		// 'coApplicantName' => $user[ 'Co-applicant Name' ] ?? '',
 		'_ Special Discount' => $user[ 'Special_Discount' ],
 		'_ Discount Valid Till' => $user[ 'Discount_Valid_Till' ]
 	];

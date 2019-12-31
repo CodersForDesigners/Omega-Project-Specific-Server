@@ -24,7 +24,7 @@ RewriteRule ^/?users$ user-get-by-phone-number/index.php [QSA,L,NC]
 RewriteCond "%{DOCUMENT_ROOT}%{REQUEST_URI}" !-f
 RewriteCond "%{REQUEST_METHOD}" GET
 RewriteCond "%{QUERY_STRING}" (^|&)uid=
-RewriteRule ^/?users$ user-get-by-uid/index.php [QSA,L,NC]
+RewriteRule ^/?users$ user-get-by-uid-v2/index.php [QSA,L,NC]
 
 # Read a user ( based on a given uid ) [ v2 ]
 RewriteCond "%{DOCUMENT_ROOT}%{REQUEST_URI}" !-f

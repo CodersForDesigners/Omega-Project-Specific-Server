@@ -31,7 +31,7 @@ header( 'Content-Type: application/json' );
 
 
 
-require_once __DIR__ . '/lib/crm.php';
+require_once __DIR__ . '/../lib/crm.php';
 
 
 /*
@@ -41,7 +41,7 @@ require_once __DIR__ . '/lib/crm.php';
  */
 $userId = $_GET[ '_userId' ];
 
-$user = CRM\getUserById( $userId );
+$user = CRM::getCustomerById( $userId );
 if ( empty( $user ) ) {
 	http_response_code( 404 );
 	$response[ 'statusCode' ] = 1;
@@ -53,12 +53,12 @@ $file = $_POST[ 'file' ];
 
 try {
 
-	CRM\attachFileToUser( $userId, $user[ 'type' ], $file );
+	CRM::uploadAttachment( $user[ 'recordType' ], $userId, $file );
 	$response[ 'statusCode' ] = 0;
 	$response[ 'message' ] = 'Successfully attached file to the user.';
 	die( json_encode( $response ) );
 
-} catch ( Exception $e ) {
+} catch ( \Exception $e ) {
 
 	http_response_code( 500 );
 	$response[ 'statusCode' ] = 1;
