@@ -177,7 +177,8 @@ function addNoteToUser ( $note, $id, $recordType ) {
 				'Note_Content' => $note[ 'content' ]
 				// '$editable' => false
 			]
-		]
+		],
+		'trigger' => [ ]
 	];
 
 	$response = getAPIResponse( $endpoint, 'POST', $data );
@@ -216,7 +217,8 @@ function updateWebsiteActivityTimestamp ( $id, $recordType ) {
 				'id' => $id,
 				'Last_Website_Visit' => $currentTimestamp
 			]
-		]
+		],
+		'trigger' => [ ]
 	];
 
 	$response = getAPIResponse( $endpoint, 'PUT', $data );
