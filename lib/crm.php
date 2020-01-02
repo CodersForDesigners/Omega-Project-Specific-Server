@@ -419,7 +419,7 @@ class CRM {
 		$requestBody = [
 			'data' => [
 				[
-					'SMOWNERID' => $customer[ 'Owner' ][ 'id' ],
+					'Owner' => $customer[ 'Owner' ][ 'id' ],
 					'Contact_Name' => $customer[ 'id' ],
 					'Amount' => $quote[ 'amount' ],
 					'Deal_Name' => $quote[ 'name' ],
